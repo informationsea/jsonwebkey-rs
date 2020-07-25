@@ -60,7 +60,7 @@ deploy:
   # - Encrypt it. Go to https://ci.appveyor.com/tools/encrypt
   # - Paste the output down here
   auth_token:
-    secure: h5l06EnW++84tlCyd7TMggC3P646aOYqBwvZBw1qR+H+Pi3agtw/hyNxY7axOvbelCeA4cKXUXpJJQ+SWK0veXZqoaslwdIMv3ym5fuSUjFxUUeXoteBTVRfPmrwpNv8r8S9eeq5dftYqGK6z/93ftZ28p8sd16rAcNIKJhGc091mNK6oMqxStxPexk2x3W+fsthXUENRDhGMgAI3ax+FnTkE3jzLylaoN1izXI20IdokA0Qey+gFwICRHGNYWEjEnfHkYE5a4ajdtmtvAosQMadT66oNkRo73MJa2jmE2GP+4mkd0RqrO4TW0yZYlhx/lCWBpaq2dEil3+VDZy21uQW+L8BYX4a1WVJgSICIJ+ZJAB7Ie6y+4k0zpboataSrBwKJOzRO03KihbJTj5Agbk8qxdYZCiobGhpiqpmUC9zYVVQAcwV5maPt+zZO5KxirWteSeR5df7zif6lddM1jP/hwhdcC2k2w03VNRWyk7yABkLKFXI7gtwhu7kC/eUyZvju20LtMoEAa6WmkLLP/Jr72K1A2OF30xKZtMd1nk9NzXZCN3G1eperXwzB3YIbuQhb+D3i3ehUzFPzzp6PMeonyRiJhf1ckWco6+df+V6VGRpUDo9kEmo30YKtrqe10AkjnFcj1fAH6ca6ttfhI6HfiU4lQcKFoX96WyIyp4=
+    secure: PDNDn9rAd2VpYwvC3gtpTYlEsEZA1YY6ApNstZLLX1iG7uMGe0dIn/w14sfsjjyShb9lM/kznRx3chfPu6HBM5S9Nn3MP0RXsNfAsQ/QzkOfUI5C5IwgQIW+qblKFWQ2pnFG0rE8O7A9nvJbnh1HdFLqoiXWFLIadj0BC11gjUgJdCIFbCDrJjA7lp2vZ4GRt3BrTl2g35ZtfH8bTf/G9C2gTweLPvRF55VD3XjUqk0NfwwrZk4Z/8tARzRtiXeLYQe6sets9dcwn6hpEtLlmD1UjIcxTCHmLNC94FVh1NR0X5wC7tKCkpGU6SvHVvB49QHBHTbCyLy84HaM8qKpOipBz1JrG2+f2qm8kEkluwNPTW+QKRzJsAI6B42ZO+DeEmON1RxanSrNRF4k9USggWTTq0yp2pAGW/dsBWmMa+XHO75xeDLF5eTqc7tfkTf+E9x1ZX03CdF8G3VEvRViPBiaDOd9UUUNn5VeXlCUGvEMD9TjOvSYb3yiLBfQydaRWyxF5Wj1l3G6wDerQX9d28a4yHLZy+n2eFf+syewy+DVithSkZj87pqellHP6bcO5fGkQr/sy2hBM24u7JuFP+KNACRmO+463N/Lc3gBmeqNPIVnXObXyZKxQseCvdyXw+JW8ooxQhKORjEVFrqInclfiizFy9LHKUZo1o5lti0=
   description: ''
   on:
     # TODO Here you can pick which targets will generate binary releases
@@ -81,9 +81,9 @@ branches:
     - /^v\d+\.\d+\.\d+.*$/
     - master
 
-notifications:
-  - provider: Email
-    on_build_success: false
+# notifications:
+#   - provider: Email
+#     on_build_success: false
 
 # Building is done in the test phase, so we disable Appveyor's build phase.
 build: false
