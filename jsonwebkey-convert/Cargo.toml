@@ -1,0 +1,18 @@
+[package]
+name = "jsonwebkey-convert"
+version = "0.1.0"
+authors = ["Okamura Yasunobu <okamura@informationsea.info>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+pem = "0.8"
+simple_asn1 = "0.4"
+num-bigint = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+base64 = "0.12"
+base64-url = "1"
+lazy_static = "1"
+failure = "0.1"
