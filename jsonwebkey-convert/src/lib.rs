@@ -50,8 +50,6 @@ pub enum JWKConvertError {
     #[error(transparent)]
     PEMParseErrror(#[from] pem::PemError),
     #[error(transparent)]
-    Base64Error(#[from] base64::DecodeError),
-    #[error(transparent)]
     Base64UrlError(#[from] base64_url::base64::DecodeError),
     #[error(transparent)]
     JSONParseError(#[from] serde_json::Error),
