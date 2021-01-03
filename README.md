@@ -4,7 +4,7 @@ Convert an RSA public key between Json Web Key and DER/PEM format.
 ## Usage
 
 ```
-Json Web Key CLI 0.1.0
+Json Web Key CLI 0.1.1
 Okamura Yasunobu <okamura@informationsea.info>
 Convert an RSA public key between Json Web Key and DER/PEM format
 

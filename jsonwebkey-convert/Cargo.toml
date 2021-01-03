@@ -1,6 +1,6 @@
 [package]
 name = "jsonwebkey-convert"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Okamura Yasunobu <okamura@informationsea.info>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -22,4 +22,5 @@ serde_json = "1"
 base64 = "0.12"
 base64-url = "1"
 lazy_static = "1"
-failure = "0.1"
+anyhow = "1"
+thiserror = "1"

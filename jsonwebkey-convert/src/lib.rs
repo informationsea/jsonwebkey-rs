@@ -31,28 +31,30 @@
 //! # }
 //! ```
 
-use failure::Fail;
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use simple_asn1::{oid, ASN1Block, BigInt, BigUint, OID};
 use std::convert::TryInto;
+use thiserror::Error;
 
-#[derive(Fail, Debug)]
+#[derive(Error, Debug)]
 pub enum JWKConvertError {
-    #[fail(display = "JWK Parse Error: {}", _0)]
+    #[error("JWK Parse Error: {0}")]
     JWKParseError(&'static str),
-    #[fail(display = "Public Key Parse Error: {}", _0)]
+    #[error("Public Key Parse Error: {0}")]
     PubKeyParse(&'static str),
-    #[fail(display = "{}", _0)]
-    ANS1DecodeError(#[fail(cause)] simple_asn1::ASN1DecodeErr),
-    #[fail(display = "{}", _0)]
-    ANS1EncodeError(#[fail(cause)] simple_asn1::ASN1EncodeErr),
-    #[fail(display = "{}", _0)]
-    PEMParseErrror(#[fail(cause)] pem::PemError),
-    #[fail(display = "{}", _0)]
-    Base64Error(#[fail(cause)] base64::DecodeError),
-    #[fail(display = "{}", _0)]
-    JSONParseError(#[fail(cause)] serde_json::Error),
+    #[error(transparent)]
+    ANS1DecodeError(#[from] simple_asn1::ASN1DecodeErr),
+    #[error(transparent)]
+    ANS1EncodeError(#[from] simple_asn1::ASN1EncodeErr),
+    #[error(transparent)]
+    PEMParseErrror(#[from] pem::PemError),
+    #[error(transparent)]
+    Base64Error(#[from] base64::DecodeError),
+    #[error(transparent)]
+    Base64UrlError(#[from] base64_url::base64::DecodeError),
+    #[error(transparent)]
+    JSONParseError(#[from] serde_json::Error),
 }
 
 lazy_static! {
@@ -109,8 +111,8 @@ impl TryInto<RSAJWK> for RSAPubKeyJWK {
         if self.kty != "RSA" {
             return Err(JWKConvertError::JWKParseError("Unspported type"));
         }
-        let n = base64_url::decode(&self.n).map_err(JWKConvertError::Base64Error)?;
-        let e = base64_url::decode(&self.e).map_err(JWKConvertError::Base64Error)?;
+        let n = base64_url::decode(&self.n)?;
+        let e = base64_url::decode(&self.e)?;
         Ok(RSAJWK {
             kid: self.kid,
             jwk_use: self.use_,
@@ -144,8 +146,7 @@ impl RSAPubKey {
                 ASN1Block::Integer(0, self.e.clone()),
             ],
         );
-        let pubkey_der =
-            simple_asn1::to_der(&pubkey_asn1).map_err(JWKConvertError::ANS1EncodeError)?;
+        let pubkey_der = simple_asn1::to_der(&pubkey_asn1)?;
         let asn1 = ASN1Block::Sequence(
             0,
             vec![
@@ -160,7 +161,7 @@ impl RSAPubKey {
             ],
         );
 
-        Ok(simple_asn1::to_der(&asn1).map_err(JWKConvertError::ANS1EncodeError)?)
+        Ok(simple_asn1::to_der(&asn1)?)
     }
 
     pub fn to_pem(&self) -> Result<String, JWKConvertError> {
@@ -175,14 +176,13 @@ impl RSAPubKey {
 
 /// Load a Json Web Key from bytes slice
 pub fn load_jwk(data: &[u8]) -> Result<RSAJWK, JWKConvertError> {
-    let jwk: RSAPubKeyJWK =
-        serde_json::from_slice(data).map_err(JWKConvertError::JSONParseError)?;
+    let jwk: RSAPubKeyJWK = serde_json::from_slice(data)?;
     Ok(jwk.try_into()?)
 }
 
 /// Load an RSA public key from DER format
 pub fn load_der(data: &[u8]) -> Result<RSAPubKey, JWKConvertError> {
-    let ans1_block_vec = simple_asn1::from_der(data).map_err(JWKConvertError::ANS1DecodeError)?;
+    let ans1_block_vec = simple_asn1::from_der(data)?;
     if ans1_block_vec.len() != 1 {
         return Err(JWKConvertError::PubKeyParse(
             "Invalid number of sequence: 1",
@@ -337,8 +337,7 @@ mod tests {
         let generated_pem = jwk_rsa.pubkey.to_pem()?;
         assert_eq!(generated_pem, str::from_utf8(&pem_data[..]).unwrap());
 
-        let jwk_parsed: RSAPubKeyJWK =
-            serde_json::from_slice(jwk_data).map_err(JWKConvertError::JSONParseError)?;
+        let jwk_parsed: RSAPubKeyJWK = serde_json::from_slice(jwk_data)?;
         let pem_jwk: RSAPubKeyJWK = serde_json::from_str(
             &RSAJWK {
                 pubkey: pem_rsa,
@@ -346,8 +345,7 @@ mod tests {
                 jwk_use: jwk_rsa.jwk_use,
             }
             .to_jwk()?,
-        )
-        .map_err(JWKConvertError::JSONParseError)?;
+        )?;
         assert_eq!(jwk_parsed, pem_jwk);
 
         Ok(())
