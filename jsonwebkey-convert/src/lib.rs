@@ -48,7 +48,7 @@ pub enum JWKConvertError {
     #[error(transparent)]
     ANS1EncodeError(#[from] simple_asn1::ASN1EncodeErr),
     #[error(transparent)]
-    PEMParseErrror(#[from] pem::PemError),
+    PEMParseError(#[from] pem::PemError),
     #[error(transparent)]
     Base64UrlError(#[from] base64_url::base64::DecodeError),
     #[error(transparent)]
@@ -252,7 +252,7 @@ pub fn load_der(data: &[u8]) -> Result<RSAPubKey, JWKConvertError> {
 
 /// Load an RSA public key from PEM format
 pub fn load_pem(data: &[u8]) -> Result<RSAPubKey, JWKConvertError> {
-    let data = pem::parse(data).map_err(JWKConvertError::PEMParseErrror)?;
+    let data = pem::parse(data)?;
     load_der(&data.contents)
 }
 

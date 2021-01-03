@@ -1,6 +1,6 @@
 [package]
 name = "jsonwebkey-cli"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Okamura Yasunobu <okamura@informationsea.info>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -14,5 +14,5 @@ categories = ["authentication"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-jsonwebkey-convert = {version = "0.2", path = "../jsonwebkey-convert"}
+jsonwebkey-convert = {version = "0.3", path = "../jsonwebkey-convert"}
 clap = "2"
