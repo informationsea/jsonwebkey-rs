@@ -1,8 +1,9 @@
 use clap::{crate_authors, crate_version, App, AppSettings, Arg, SubCommand};
+use jsonwebkey_convert::der::*;
 use jsonwebkey_convert::*;
 use std::fs;
 
-fn main() -> Result<(), JWKConvertError> {
+fn main() -> Result<(), Error> {
     let matches = App::new("Json Web Key CLI")
         .version(crate_version!())
         .author(crate_authors!())
@@ -62,7 +63,8 @@ fn main() -> Result<(), JWKConvertError> {
         let jwk_path = jwk_to_pem.value_of("jwk").unwrap();
         let output_path = jwk_to_pem.value_of("output").unwrap();
         let data = fs::read(jwk_path).unwrap();
-        let pem = load_jwk(&data)?.pubkey.to_pem()?;
+        let jwk: RSAPublicKey = serde_json::from_slice(&data[..])?;
+        let pem = jwk.to_pem()?;
         fs::write(output_path, &pem).unwrap();
     } else if let Some(pem_to_jwk) = matches.subcommand_matches("pem-to-jwk") {
         let pem_path = pem_to_jwk.value_of("pem").unwrap();
@@ -70,13 +72,18 @@ fn main() -> Result<(), JWKConvertError> {
         let kid = pem_to_jwk.value_of("kid").map(|x| x.to_string());
         let jwk_use = pem_to_jwk.value_of("use").map(|x| x.to_string());
         let data = fs::read(pem_path).unwrap();
-        let jwk = RSAJWK {
-            pubkey: load_pem(&data)?,
-            kid,
-            jwk_use,
-        }
-        .to_jwk()?;
-        fs::write(output_path, &jwk).unwrap();
+        let mut jwk = RSAPublicKey::from_pem(&data)?;
+        jwk.generic.kid = kid;
+        jwk.generic.use_ = jwk_use.map(|x| match x.as_str() {
+            "enc" => KeyUse::Encryption,
+            "sig" => KeyUse::Signature,
+            _ => {
+                eprintln!("Unknown key use: {}", x);
+                KeyUse::Encryption
+            }
+        });
+        let jwk_bytes = serde_json::to_vec(&jwk)?;
+        fs::write(output_path, &jwk_bytes).unwrap();
     } else {
         unreachable!()
     }

@@ -14,5 +14,6 @@ categories = ["authentication"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-jsonwebkey-convert = {version = "0.3", path = "../jsonwebkey-convert"}
+jsonwebkey-convert = {version = "0.3", path = "../jsonwebkey-convert", features = ["pem_support"]}
 clap = "2"
+serde_json = "1"
