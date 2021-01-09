@@ -1,4 +1,5 @@
 # jsonwebkey-cli
+[![Build](https://github.com/informationsea/jsonwebkey-rs/workflows/Rust/badge.svg)](https://github.com/informationsea/jsonwebkey-rs/actions)
 Convert an RSA public key between Json Web Key and DER/PEM format.
 
 ## Usage

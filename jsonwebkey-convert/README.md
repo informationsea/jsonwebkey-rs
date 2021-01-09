@@ -2,19 +2,14 @@
 Convert an RSA public key between Json Web Key and DER/PEM format.
 
 ## Convert PEM to JWK
-```rust
+``` rust
 use jsonwebkey_convert::*;
+use jsonwebkey_convert::der::FromPem;
 
-fn main() -> Result<(), JWKConvertError> {
-    let pem_data = include_bytes!("../testfiles/test1.pem");
-    let pem_rsa = load_pem(&pem_data[..])?;
-    let jwk_data = RSAJWK {
-        kid: Some("3f5fbba0-06c4-467c-8d5e-e935a71437b0".to_string()),
-        jwk_use: Some("sig".to_string()),
-        pubkey: pem_rsa
-    };
-
-    let jwk_byte_vec = jwk_data.to_jwk()?;
+fn main() -> Result<(), Error> {
+    let pem_data = include_str!("../testfiles/test1.pem");
+    let rsa_jwk = RSAPublicKey::from_pem(pem_data)?;
+    let jwk_byte_vec = serde_json::to_string(&rsa_jwk);
     Ok(())
 }
 ```
@@ -23,12 +18,12 @@ fn main() -> Result<(), JWKConvertError> {
 
 ```rust
 use jsonwebkey_convert::*;
+use jsonwebkey_convert::der::ToPem;
 
-fn main() -> Result<(), JWKConvertError> {
-    let jwk_byte_vec = include_bytes!("../testfiles/test1.json");
-    let jwk_data = load_jwk(&jwk_byte_vec[..])?;
-    let rsa_pubkey = jwk_data.pubkey;
-    let pem_string = rsa_pubkey.to_pem()?;
+fn main() -> Result<(), Error> {
+    let jwk_data = include_str!("../testfiles/test1.json");
+    let rsa_jwk: RSAPublicKey = jwk_data.parse()?;
+    let pem_data = rsa_jwk.to_pem()?;
     Ok(())
 }
 ```
